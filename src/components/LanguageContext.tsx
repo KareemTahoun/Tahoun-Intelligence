@@ -27,15 +27,42 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     // Dynamic body typography alignment and direction handling
     document.documentElement.lang = language;
+    
+    // Dynamic SEO Metadata Configuration
+    const baseTitle = "Tahoun Intelligence : Intelligent Systems For Growth & Transformation";
+    let desc = "Premium systemic growth and digital transformation architecture for businesses and professionals.";
+    
     if (language === 'ar') {
       document.documentElement.dir = 'rtl';
       document.body.dir = 'rtl';
       document.body.style.fontFamily = '"Cairo", "Inter", sans-serif';
+      desc = "بنية تحتية متقدمة للنمو المنهجي والتحول الرقمي للشركات والمحترفين.";
+      document.title = "Tahoun Intelligence : أنظمة ذكية للنمو والتحول";
+    } else if (language === 'it') {
+      document.documentElement.dir = 'ltr';
+      document.body.dir = 'ltr';
+      document.body.style.fontFamily = '"Inter", sans-serif';
+      desc = "Architettura premium di crescita sistemica e trasformazione digitale per aziende e professionisti.";
+      document.title = "Tahoun Intelligence : Sistemi Intelligenti per Crescita e Trasformazione";
     } else {
       document.documentElement.dir = 'ltr';
       document.body.dir = 'ltr';
       document.body.style.fontFamily = '"Inter", sans-serif';
+      document.title = baseTitle;
     }
+
+    // Update Meta Tags dynamically
+    const updateMetaTag = (selector: string, content: string) => {
+      let el = document.querySelector(selector);
+      if (el) el.setAttribute("content", content);
+    };
+
+    updateMetaTag('meta[name="description"]', desc);
+    updateMetaTag('meta[property="og:title"]', document.title);
+    updateMetaTag('meta[property="og:description"]', desc);
+    updateMetaTag('meta[property="twitter:title"]', document.title);
+    updateMetaTag('meta[property="twitter:description"]', desc);
+
   }, [language]);
 
   const t = localization[language];

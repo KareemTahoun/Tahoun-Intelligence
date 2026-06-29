@@ -1,6 +1,6 @@
 {
-  "name": "TAHOUN Intelligence",
-  "description": "The premium official digital headquarters of TAHOUN Intelligence. Designing growth systems, digital transformation architectures, and elite academies in English, Arabic, and Italian.",
+  "name": "Tahoun Intelligence",
+  "description": "Tahoun Intelligence : Intelligent Systems For Growth & Transformation. Designing growth systems, digital transformation architectures, and elite academies in English, Arabic, and Italian.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

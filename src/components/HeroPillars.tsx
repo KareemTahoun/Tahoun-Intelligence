@@ -10,6 +10,7 @@ import {
   Globe,
   ArrowDown,
   ArrowUpRight,
+  X,
 } from "lucide-react";
 
 export const HeroPillars: React.FC = () => {
@@ -118,31 +119,18 @@ export const HeroPillars: React.FC = () => {
 
               {/* Inner Intelligent Video Container */}
               <div className="w-full h-full rounded-full overflow-hidden bg-white border border-black/10 shadow-[0_0_50px_rgba(79,70,229,0.1)] flex items-center justify-center relative group">
-                {isPlayingBrief ? (
-                  <iframe
-                    className="absolute inset-0 w-full h-full pointer-events-auto"
-                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-                    title="TAHOUN Intelligence Founder Briefing"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                ) : (
-                  <>
-                    <img
-                      src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-                      alt="Video Thumbnail"
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                    <button
-                      onClick={() => setIsPlayingBrief(true)}
-                      className="relative z-10 w-20 h-20 rounded-full bg-white/20 backdrop-blur-md border border-white/50 flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300"
-                    >
-                      <Play className="w-8 h-8 fill-white text-white pl-1" />
-                    </button>
-                  </>
-                )}
+                <img
+                  src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+                  alt="Video Thumbnail"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                <button
+                  onClick={() => setIsPlayingBrief(true)}
+                  className="relative z-10 w-20 h-20 rounded-full bg-white/20 backdrop-blur-md border border-white/50 flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300"
+                >
+                  <Play className="w-8 h-8 fill-white text-white pl-1" />
+                </button>
               </div>
             </div>
 
@@ -247,31 +235,18 @@ export const HeroPillars: React.FC = () => {
 
               <div className="relative w-full h-full rounded-full overflow-hidden border border-black/10 p-1 bg-white">
                 <div className="relative w-full h-full rounded-full overflow-hidden bg-white flex flex-col items-center justify-center group">
-                  {isPlayingBrief ? (
-                    <iframe
-                      className="absolute inset-0 w-full h-full pointer-events-auto"
-                      src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-                      title="TAHOUN Intelligence Founder Briefing"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  ) : (
-                    <>
-                      <img
-                        src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-                        alt="Video Thumbnail"
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                      <button
-                        onClick={() => setIsPlayingBrief(true)}
-                        className="relative z-10 w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/50 flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300"
-                      >
-                        <Play className="w-6 h-6 fill-white text-white pl-1" />
-                      </button>
-                    </>
-                  )}
+                  <img
+                    src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+                    alt="Video Thumbnail"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                  <button
+                    onClick={() => setIsPlayingBrief(true)}
+                    className="relative z-10 w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/50 flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300"
+                  >
+                    <Play className="w-6 h-6 fill-white text-white pl-1" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -391,6 +366,27 @@ export const HeroPillars: React.FC = () => {
           </a>
         </div>
       </div>
+
+      {isPlayingBrief && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+          <button 
+            onClick={() => setIsPlayingBrief(false)}
+            className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          >
+            <X className="w-8 h-8" />
+          </button>
+          <div className="w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+            <iframe
+              className="w-full h-full"
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+              title="TAHOUN Intelligence Founder Briefing"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
