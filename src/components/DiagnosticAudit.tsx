@@ -11,6 +11,8 @@ import {
   Zap,
   Calendar,
   RefreshCcw,
+  MessageCircle,
+  Mail,
 } from "lucide-react";
 
 export interface AuditResult {
@@ -46,7 +48,6 @@ export const DiagnosticAudit: React.FC = () => {
   const [showInquiryForm, setShowInquiryForm] = useState(false);
 
   // Inquiry Contact State
-  const [clientEmail, setClientEmail] = useState("");
   const [clientName, setClientName] = useState("");
 
   // Dropdown Lists based on language
@@ -246,40 +247,44 @@ export const DiagnosticAudit: React.FC = () => {
   };
 
   // Pre-qualifying Booking submit
-  const handleBookingSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!clientEmail || !clientName) return;
+  const generateTemplate = (name: string) => {
+    const isAr = language === 'ar';
+    const isIt = language === 'it';
     
-    try {
-      await fetch('/api/book-call', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: clientName,
-          email: clientEmail,
-          language: language
-        })
-      });
-      setBookingSuccess(true);
-      setTimeout(() => {
-        setBookingSuccess(false);
-        setShowInquiryForm(false);
-        setClientEmail("");
-        setClientName("");
-      }, 4000);
-    } catch (err) {
-      console.error(err);
-      // Fallback
-      setBookingSuccess(true);
-      setTimeout(() => {
-        setBookingSuccess(false);
-        setShowInquiryForm(false);
-        setClientEmail("");
-        setClientName("");
-      }, 4000);
+    if (isAr) {
+      return `أهلاً كريم،\n\nأود طلب جلسة مواءمة استراتيجية بناءً على المخطط المعماري التشخيصي الخاص بي.\n\nالاسم: ${name || '_________'}\nقطاع الأعمال: ${businessType}\nحجم التشغيل: ${currentSize}\nأهم التحديات: ${topChallenge}\n\nنتائج التشخيص:\nمؤشر النمو: ${result?.growthIndex}\nالملخص المعماري: ${result?.architecturalSummary}\n\nأتطلع للتواصل معكم.`;
+    } else if (isIt) {
+      return `Ciao Kareem,\n\nVorrei richiedere una Chiamata di Allineamento Strategico basata sul mio progetto diagnostico.\n\nNome: ${name || '_________'}\nSettore Aziendale: ${businessType}\nDimensione Operativa: ${currentSize}\nSfida Principale: ${topChallenge}\n\nRisultato del Progetto:\nIndice di Crescita: ${result?.growthIndex}\nRiepilogo Architettonico: ${result?.architecturalSummary}\n\nNon vedo l'ora di parlare con te.`;
+    } else {
+      return `Hello Kareem,\n\nI would like to request a Strategic Alignment Call based on my generated diagnostic blueprint.\n\nName: ${name || '_________'}\nBusiness Sector: ${businessType}\nOperations Scale: ${currentSize}\nTop Challenge: ${topChallenge}\n\nDiagnostic Blueprint Result:\nGrowth Index: ${result?.growthIndex}\nPrimary Module: ${result?.architecturalSummary}\n\nI am looking forward to our discussion.`;
     }
+  };
+
+  const handleWhatsApp = () => {
+    if (!clientName) return;
+    const text = encodeURIComponent(generateTemplate(clientName));
+    window.open(`https://wa.me/201002642521?text=${text}`, '_blank');
+    
+    setBookingSuccess(true);
+    setTimeout(() => {
+      setBookingSuccess(false);
+      setShowInquiryForm(false);
+      setClientName("");
+    }, 4000);
+  };
+
+  const handleEmail = () => {
+    if (!clientName) return;
+    const subject = encodeURIComponent(language === 'ar' ? 'طلب جلسة مواءمة استراتيجية' : language === 'it' ? 'Richiesta di Chiamata di Allineamento Strategico' : 'Strategic Alignment Call Request');
+    const body = encodeURIComponent(generateTemplate(clientName));
+    window.open(`mailto:Kareem@Tahoun.live?subject=${subject}&body=${body}`, '_blank');
+    
+    setBookingSuccess(true);
+    setTimeout(() => {
+      setBookingSuccess(false);
+      setShowInquiryForm(false);
+      setClientName("");
+    }, 4000);
   };
 
   const handleReset = () => {
@@ -721,60 +726,54 @@ export const DiagnosticAudit: React.FC = () => {
                         : "Form delivered successfully! Email briefing has been dispatched."}
                   </div>
                 ) : (
-                  <form onSubmit={handleBookingSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-mono text-slate-500 uppercase font-semibold">
-                          {language === "ar"
-                            ? "الاسم *"
-                            : language === "it"
-                              ? "Il tuo Nome *"
-                              : "Your Name *"}
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={clientName}
-                          onChange={(e) => setClientName(e.target.value)}
-                          placeholder={
-                            language === "ar" ? "كريم طاحون" : "Kareem Tahoun"
-                          }
-                          className="w-full rounded-lg bg-slate-50 border border-black/5 p-2.5 text-xs text-slate-800 outline-none focus:border-[#0891B2]"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-mono text-slate-500 uppercase font-semibold">
-                          {language === "ar"
-                            ? "البريد الإلكتروني المهني *"
-                            : language === "it"
-                              ? "Email Professionale *"
-                              : "Your Professional Email *"}
-                        </label>
-                        <input
-                          type="email"
-                          required
-                          value={clientEmail}
-                          onChange={(e) => setClientEmail(e.target.value)}
-                          placeholder={
-                            language === "ar"
-                              ? "client@organization.net"
-                              : "client@organization.net"
-                          }
-                          className="w-full rounded-lg bg-slate-50 border border-black/5 p-2.5 text-xs text-slate-800 outline-none focus:border-[#0891B2]"
-                        />
-                      </div>
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-slate-500 uppercase font-semibold">
+                        {language === "ar"
+                          ? "الاسم *"
+                          : language === "it"
+                            ? "Il tuo Nome *"
+                            : "Your Name *"}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={clientName}
+                        onChange={(e) => setClientName(e.target.value)}
+                        placeholder={
+                          language === "ar" ? "كريم طاحون" : "Kareem Tahoun"
+                        }
+                        className="w-full rounded-lg bg-slate-50 border border-black/5 p-2.5 text-xs text-slate-800 outline-none focus:border-[#0891B2]"
+                      />
                     </div>
-                    <button
-                      type="submit"
-                      className="w-full py-3 rounded-xl bg-gradient-to-r from-[#4F46E5] to-[#0891B2] text-white hover:opacity-90 font-mono text-xs font-bold uppercase transition cursor-pointer"
-                    >
-                      {language === "ar"
-                        ? "إرسال بيانات جلسة التخطيط"
-                        : language === "it"
-                          ? "Conferma e Richiedi Discussione Progetto"
-                          : "Confirm & Request Blueprint Discussion"}
-                    </button>
-                  </form>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                      <button
+                        onClick={handleWhatsApp}
+                        disabled={!clientName}
+                        className="w-full py-3 rounded-xl bg-[#25D366] text-white hover:opacity-90 font-mono text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        {language === "ar"
+                          ? "إرسال عبر واتساب"
+                          : language === "it"
+                            ? "Invia tramite WhatsApp"
+                            : "Send via WhatsApp"}
+                      </button>
+                      <button
+                        onClick={handleEmail}
+                        disabled={!clientName}
+                        className="w-full py-3 rounded-xl bg-gradient-to-r from-[#4F46E5] to-[#0891B2] text-white hover:opacity-90 font-mono text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Mail className="w-4 h-4" />
+                        {language === "ar"
+                          ? "إرسال عبر البريد الإلكتروني"
+                          : language === "it"
+                            ? "Invia tramite Email"
+                            : "Send via Email"}
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             )}

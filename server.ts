@@ -141,44 +141,6 @@ Formulate and populate:
     }
   });
 
-  // API Route: Book strategic call
-  app.post("/api/book-call", async (req: express.Request, res: express.Response) => {
-    try {
-      const { name, email, language } = req.body;
-      
-      const user = process.env.SMTP_USER;
-      const pass = process.env.SMTP_PASS;
-      
-      if (!user || !pass || user === "your-email@gmail.com") {
-        console.warn("SMTP credentials not provided or using default. Booking recorded but email not sent. Please update SMTP_USER and SMTP_PASS in secrets to receive emails.");
-        return res.json({ success: true, message: "Booking recorded (email sending skipped)." });
-      }
-
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: user,
-          pass: pass,
-        },
-      });
-
-      const mailOptions = {
-        from: user,
-        to: "Kareem@Tahoun.live",
-        subject: `New Strategic Call Booking from ${name}`,
-        text: `New booking request received.\n\nName: ${name}\nEmail: ${email}\nLanguage: ${language}\n\nPlease reach out to them to schedule the strategic call.`,
-      };
-
-      await transporter.sendMail(mailOptions);
-      res.json({ success: true });
-    } catch (error: any) {
-      // Return 200 success for the user booking experience even if the server-to-admin email fails,
-      // but warn about SMTP configuration in the console gracefully without crashing or creating alarming error traces.
-      console.warn("Booking was successful but the admin notification email failed to send. Check SMTP settings.");
-      res.json({ success: true, warning: "Failed to send admin email" });
-    }
-  });
-
   // Hot Reload Development Server setup versus Production Static files
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
