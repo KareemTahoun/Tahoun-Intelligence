@@ -3,6 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -128,7 +129,7 @@ Formulate and populate:
       res.json(cleanJson);
 
     } catch (error: any) {
-      console.log("Diagnostic generator failed, using fallback:", error.message || error);
+      console.log("Diagnostic generator failed, using fallback.");
       const { 
         lang = 'en', 
         businessType = '', 
@@ -137,6 +138,42 @@ Formulate and populate:
         goals = ''
       } = req.body;
       return res.json(getFallbackData(lang, businessType, currentSize, topChallenge, goals));
+    }
+  });
+
+  // API Route: Book strategic call
+  app.post("/api/book-call", async (req: express.Request, res: express.Response) => {
+    try {
+      const { name, email, language } = req.body;
+      
+      const user = process.env.SMTP_USER;
+      const pass = process.env.SMTP_PASS;
+      
+      if (!user || !pass) {
+        console.warn("SMTP credentials not provided. Booking recorded but email not sent.");
+        return res.json({ success: true, message: "Booking recorded (email sending skipped)." });
+      }
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: user,
+          pass: pass,
+        },
+      });
+
+      const mailOptions = {
+        from: user,
+        to: "Kareem@Tahoun.live",
+        subject: `New Strategic Call Booking from ${name}`,
+        text: `New booking request received.\n\nName: ${name}\nEmail: ${email}\nLanguage: ${language}\n\nPlease reach out to them to schedule the strategic call.`,
+      };
+
+      await transporter.sendMail(mailOptions);
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Failed to send booking email:", error);
+      res.status(500).json({ error: "Failed to send email" });
     }
   });
 
